@@ -1,4 +1,6 @@
 export default {
+
+    //function to create random number to use it in room id 
     generateRandomString() {
         const crypto = window.crypto || window.msCrypto;
         let array = new Uint32Array(1);
@@ -9,11 +11,12 @@ export default {
         
     },
 
-
+     
     closeVideo( elemId ) {
         if ( document.getElementById( elemId ) ) {
             document.getElementById( elemId ).remove();
             this.adjustVideoElemSize();
+            // console.log(adjustVideoElemSize(),'adjustVideoElemSize()')
             console.log(elemId,'mmmmmmmmmmmmmmmmmmmmmm')
         }
     },
