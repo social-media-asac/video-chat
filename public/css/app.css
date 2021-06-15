@@ -222,7 +222,58 @@
         width:40vw;
     }
 }
+/* ahmad work */
+ /* .rounded-0 {
+    border-radius: 0!important;
+     border-block-color: inherit; 
+     white-space: pre-wrap; 
+ } */
+.bg-info {
+     background-color: black;
+    /* background-position: right; 
+     background-position-x: 20px; 
+    alignment-baseline: middle; 
+     size: b4; 
+     background-size: 300px 100px; 
+     width: 200px;
+    height: auto;  */
+}
+.bg-info {
+    background-color: black!important;
+} 
 
+/* .local-video {
+    bottom: 0;
+    left: 200px;
+    position: absolute;
+    width: 15vw;
+} */
+/* 
+.remote-video {
+    width: 100%;
+    height: auto;
+    max-height: 90vh;
+    
+    position: relative;
+} */
+.btn-info {
+    /* color: #fff;
+    background-color: black; */
+    /* border-color: #17a2b8; */
+}
+
+.row {
+    /* --bs-gutter-x: 1.5rem; */
+    /* --bs-gutter-y: 0;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: calc(var(--bs-gutter-y) * -1);
+    margin-right: calc(var(--bs-gutter-x)/ -2);
+    margin-left: calc(var(--bs-gutter-x)/ -2);
+} */
+/* div#chat-pane {
+    width: -webkit-fill-available;
+} */
 
 @media (min-width:768px){
     .card{

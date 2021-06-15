@@ -308,7 +308,79 @@
  
  
  
+         function shareScreen() {
+             h.shareScreen().then( ( stream ) => {
+                 h.toggleShareIcons( false );
  
+                 //disable the video toggle btns while sharing screen. This is to ensure clicking on the btn does not interfere with the screen sharing
+                 //It will be enabled was user stopped sharing screen
+                 h.toggleVideoBtnDisabled( true );
+ 
+                 //save my screen stream
+                 screen = stream;
+ 
+                 //share the new stream with all partners
+                 broadcastNewTracks( stream, 'video', true );
+ 
+                 //When the stop sharing button shown by the browser is clicked
+                 screen.getVideoTracks()[0].addEventListener( 'ended', () => {
+                     stopSharingScreen();
+                 } );
+             } ).catch( ( e ) => {
+                 console.error( e );
+             } );
+         }
+ 
+ 
+ 
+         function stopSharingScreen() {
+             //enable video toggle btn
+             h.toggleVideoBtnDisabled( false );
+ 
+             return new Promise( ( res, rej ) => {
+                 screen.getTracks().length ? screen.getTracks().forEach( track => track.stop() ) : '';
+ 
+                 res();
+             } ).then( () => {
+                 h.toggleShareIcons( false );
+                 broadcastNewTracks( myStream, 'video' );
+             } ).catch( ( e ) => {
+                 console.error( e );
+             } );
+         }
+ 
+ 
+ 
+         function broadcastNewTracks( stream, type, mirrorMode = true ) {
+             h.setLocalStream( stream, mirrorMode );
+ 
+             let track = type == 'audio' ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0];
+ 
+             for ( let p in pc ) {
+                 let pName = pc[p];
+ 
+                 if ( typeof pc[pName] == 'object' ) {
+                     h.replaceTrack( track, pc[pName] );
+                 }
+             }
+         }
+ 
+ 
+         function toggleRecordingIcons( isRecording ) {
+             let e = document.getElementById( 'record' );
+ 
+             if ( isRecording ) {
+                 e.setAttribute( 'title', 'Stop recording' );
+                 e.children[0].classList.add( 'text-danger' );
+                 e.children[0].classList.remove( 'text-white' );
+             }
+ 
+             else {
+                 e.setAttribute( 'title', 'Record' );
+                 e.children[0].classList.add( 'text-white' );
+                 e.children[0].classList.remove( 'text-danger' );
+             }
+         }
  
  
          function startRecording( stream ) {
@@ -383,11 +455,95 @@
  
  
          //When the mute icon is clicked
-      
+         document.getElementById( 'toggle-mute' ).addEventListener( 'click', ( e ) => {
+             e.preventDefault();
+ 
+             let elem = document.getElementById( 'toggle-mute' );
+ 
+             if ( myStream.getAudioTracks()[0].enabled ) {
+                 e.target.classList.remove( 'fa-microphone-alt' );
+                 e.target.classList.add( 'fa-microphone-alt-slash' );
+                 elem.setAttribute( 'title', 'Unmute' );
+ 
+                 myStream.getAudioTracks()[0].enabled = false;
+             }
+ 
+             else {
+                 e.target.classList.remove( 'fa-microphone-alt-slash' );
+                 e.target.classList.add( 'fa-microphone-alt' );
+                 elem.setAttribute( 'title', 'Mute' );
+ 
+                 myStream.getAudioTracks()[0].enabled = true;
+             }
+ 
+             broadcastNewTracks( myStream, 'audio' );
+         } );
  
  
+         //When user clicks the 'Share screen' button
+         document.getElementById( 'share-screen' ).addEventListener( 'click', ( e ) => {
+             e.preventDefault();
  
-      
+             if ( screen && screen.getVideoTracks().length && screen.getVideoTracks()[0].readyState != 'ended' ) {
+                 stopSharingScreen();
+             }
+ 
+             else {
+                 shareScreen();
+             }
+         } );
+ 
+ 
+         //When record button is clicked
+         document.getElementById( 'record' ).addEventListener( 'click', ( e ) => {
+             /**
+              * Ask user what they want to record.
+              * Get the stream based on selection and start recording
+              */
+             if ( !mediaRecorder || mediaRecorder.state == 'inactive' ) {
+                 h.toggleModal( 'recording-options-modal', true );
+             }
+ 
+             else if ( mediaRecorder.state == 'paused' ) {
+                 mediaRecorder.resume();
+             }
+ 
+             else if ( mediaRecorder.state == 'recording' ) {
+                 mediaRecorder.stop();
+             }
+         } );
+ 
+ 
+         //When user choose to record screen
+         document.getElementById( 'record-screen' ).addEventListener( 'click', () => {
+             h.toggleModal( 'recording-options-modal', false );
+ 
+             if ( screen && screen.getVideoTracks().length ) {
+                 startRecording( screen );
+             }
+ 
+             else {
+                 h.shareScreen().then( ( screenStream ) => {
+                     startRecording( screenStream );
+                 } ).catch( () => { } );
+             }
+         } );
+ 
+ 
+         //When user choose to record own video
+         document.getElementById( 'record-video' ).addEventListener( 'click', () => {
+             h.toggleModal( 'recording-options-modal', false );
+ 
+             if ( myStream && myStream.getTracks().length ) {
+                 startRecording( myStream );
+             }
+ 
+             else {
+                 h.getUserFullMedia().then( ( videoStream ) => {
+                     startRecording( videoStream );
+                 } ).catch( () => { } );
+             }
+         } );
      }
  } );
  

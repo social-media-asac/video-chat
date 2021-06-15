@@ -1,4 +1,6 @@
 export default {
+
+    //function to create random number to use it in room id 
     generateRandomString() {
         const crypto = window.crypto || window.msCrypto;
         let array = new Uint32Array(1);
@@ -9,11 +11,12 @@ export default {
         
     },
 
-
+     
     closeVideo( elemId ) {
         if ( document.getElementById( elemId ) ) {
             document.getElementById( elemId ).remove();
             this.adjustVideoElemSize();
+            // console.log(adjustVideoElemSize(),'adjustVideoElemSize()')
             console.log(elemId,'mmmmmmmmmmmmmmmmmmmmmm')
         }
     },
@@ -26,19 +29,28 @@ export default {
 
     getQString( url = '', keyToReturn = '' ) {
         url = url ? url : location.href;
+        console.log(location,'location')
+        console.log(location.href,'location.href')
+        console.log(url,'url print')
         let queryStrings = decodeURIComponent( url ).split( '#', 2 )[0].split( '?', 2 )[1];
+        console.log(decodeURIComponent(  ),'decodeURIComponent( url )')
+        console.log(decodeURIComponent( url ).split( '#', 2 )[0],'---------');
 
+        console.log(queryStrings,' queryStrings')
         if ( queryStrings ) {
             let splittedQStrings = queryStrings.split( '&' );
+            console.log(splittedQStrings,'splittedQStrings')
 
             if ( splittedQStrings.length ) {
                 let queryStringObj = {};
 
                 splittedQStrings.forEach( function ( keyValuePair ) {
                     let keyValue = keyValuePair.split( '=', 2 );
+                    console.log(keyValue,'keyValue')
 
                     if ( keyValue.length ) {
                         queryStringObj[keyValue[0]] = keyValue[1];
+                        console.log(queryStringObj,'99999999')
                     }
                 } );
 
